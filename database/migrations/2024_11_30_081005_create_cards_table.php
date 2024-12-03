@@ -15,10 +15,12 @@ return new class extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');
-            $table->text('description');
+            $table->string('type');//->constrained('card_types'); // Assuming you have a card_types table
+            $table->string('attribute')->nullable();
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
+        
     }
 
     /**

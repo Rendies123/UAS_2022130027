@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CardSeeder extends Seeder
@@ -12,11 +11,22 @@ class CardSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Card::create([
-            'name' => 'Blue-Eyes White Dragon',
-            'type' => 'Monster',
-            'description' => 'A powerful dragon with high attack points.',
-        ]);
+        \DB::table('cards')->delete();
+
+        \DB::table('cards')->insert(array (
+            0 =>
+            array (
+                'name' => 'Chain Summoning',
+                'type' => 'Spell Card',
+                'photo' => 'public/image/9952083.jpg',
+            ),
+            1 =>
+            array (
+                'name' => 'Triamid Fortress',
+                'type' => 'Spell Card',
+                'photo' => 'public/image/9989792.jpg',
+            ),
+        ));
     }
 
 }

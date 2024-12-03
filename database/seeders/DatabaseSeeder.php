@@ -14,9 +14,13 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
+        // Uncomment the following lines to create example users:
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        // Call the CardSeeder
+        $this->call(CardSeeder::class);
     }
 }

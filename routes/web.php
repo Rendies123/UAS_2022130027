@@ -5,6 +5,8 @@ use App\Http\Controllers\DeckController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CardTypeController;
 use App\Http\Controllers\CardCollectionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DeckCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +27,9 @@ Route::get('/', function () {
 Route::resource('decks', DeckController::class);
 Route::resource('cards', CardController::class);
 Route::resource('card_types', CardTypeController::class);
-Route::resource('card_collections', CardCollectionController::class);
+Route::resource('cards_collection', CardCollectionController::class);
+Route::resource('deck_cards', DeckCardController::class);
+Route::resource('users', UserController::class);
 
 Auth::routes();
 
