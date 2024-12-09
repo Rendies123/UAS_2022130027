@@ -9,27 +9,41 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // database/migrations/xxxx_xx_xx_xxxxxx_create_card_collection_table.php
-    public function up()
+    public function up(): void
     {
-        Schema::create('card_collection', function (Blueprint $table) {
+        Schema::create('card_collections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('card_id');
-            $table->integer('quantity');
+            $table->string('name')->nullable(); // Optional name for the collection
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade');
+            $table->text('description')->nullable(); // Optional description
+            $table->timestamps();
+        });
+
+        // Optional: Pivot table for many-to-many relationship
+        Schema::create('card_collection_card', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('card_collection_id')
+                  ->constrained('card_collections')
+                  ->onDelete('cascade');
+            $table->foreignId('card_id')
+                  ->constrained('cards')
+                  ->onDelete('cascade');
+            $table->integer('quantity')->default(1); // Optional quantity tracking
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            // Prevent duplicate entries
+            $table->unique(['card_collection_id', 'card_id']);
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('card_collection');
+        Schema::dropIfExists('card_collection_card');
+        Schema::dropIfExists('card_collections');
     }
 };

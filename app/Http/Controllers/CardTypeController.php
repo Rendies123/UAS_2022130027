@@ -20,13 +20,14 @@ class CardTypeController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'type_name' => 'required',
-        ]);
-        CardType::create($request->all());
-        return redirect()->route('cardTypes.index');
-    }
+{
+    $request->validate([
+        'type_name' => 'required',
+        '_token' => 'required|csrf_token', // Ensure CSRF token is present and valid
+    ]);
+    CardType::create($request->only(['type_name'])); // Only allow mass assignment for 'type_name'
+    return redirect()->route('cardTypes.index');
+}
 
     public function show($id)
     {
@@ -41,13 +42,14 @@ class CardTypeController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'type_name' => 'required',
-        ]);
-        CardType::findOrFail($id)->update($request->all());
-        return redirect()->route('cardTypes.index');
-    }
+{
+    $request->validate([
+        'type_name' => 'required',
+        '_token' => 'required|csrf_token', // Ensure CSRF token is present and valid
+    ]);
+    CardType::findOrFail($id)->update($request->only(['type_name'])); // Only allow mass assignment for 'type_name'
+    return redirect()->route('cardTypes.index');
+}
 
     public function destroy($id)
     {

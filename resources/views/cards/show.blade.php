@@ -3,6 +3,7 @@
     <h1>{{ $card->name }}</h1>
     <p>Type: {{ $card->type }}</p>
     <p>Description: {{ $card->description }}</p>
+    <img src="{{ Storage::URL('' . $card->photo) ?? 'https://via.placeholder.com/150' }}" alt="">
     <a href="{{ route('cards.edit', $card->id) }}" class="btn btn-warning">Edit</a>
     <form action="{{ route('cards.destroy', $card->id) }}" method="POST" style="display:inline;">
         @csrf

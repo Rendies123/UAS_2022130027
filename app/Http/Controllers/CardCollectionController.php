@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/CardCollectionController.php
 namespace App\Http\Controllers;
 
 use App\Models\CardCollection;
@@ -11,50 +10,54 @@ class CardCollectionController extends Controller
     public function index()
     {
         $cardCollections = CardCollection::all();
-        return view('cardCollections.index', compact('cardCollections'));
+        return view('cardcollections.index', compact('cardCollections'));
     }
 
     public function create()
     {
-        return view('cardCollections.create');
+        return view('cardcollections.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'deck_id' => 'required',
-            'card_id' => 'required',
+            'name' => 'required|string|max:255', // Added name validation
+            'deck_id' => 'required|exists:decks,id',
+            'card_id' => 'required|exists:cards,id',
         ]);
+
         CardCollection::create($request->all());
-        return redirect()->route('cardCollections.index');
+        return redirect()->route('card_collections.index')
+            ->with('success', 'Card Collection created successfully.');
     }
 
-    public function show($id)
+    public function show(CardCollection $cardCollection)
     {
-        $cardCollection = CardCollection::findOrFail($id);
-        return view('cardCollections.show', compact('cardCollection'));
+        return view('card_collections.show', compact('cardCollection'));
     }
 
-    public function edit($id)
+    public function edit(CardCollection $cardCollection)
     {
-        $cardCollection = CardCollection::findOrFail($id);
-        return view('cardCollections.edit', compact('cardCollection'));
+        return view('card_collections.edit', compact('cardCollection'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, CardCollection $cardCollection)
     {
         $request->validate([
-            'deck_id' => 'required',
-            'card_id' => 'required',
+            'name' => 'required|string|max:255',
+            'deck_id' => 'required|exists:decks,id',
+            'card_id' => 'required|exists:cards,id',
         ]);
-        CardCollection::findOrFail($id)->update($request->all());
-        return redirect()->route('cardCollections.index');
+
+        $cardCollection->update($request->all());
+        return redirect()->route('card_collections.index')
+            ->with('success', 'Card Collection updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(CardCollection $cardCollection)
     {
-        CardCollection::findOrFail($id)->delete();
-        return redirect()->route('cardCollections.index');
+        $cardCollection->delete();
+        return redirect()->route('card_collections.index')
+            ->with('success', 'Card Collection deleted successfully.');
     }
 }
-

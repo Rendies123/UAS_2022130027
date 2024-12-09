@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deck;
+use App\Models\Card;
 use Illuminate\Http\Request;
 
 class DeckController extends Controller
@@ -35,8 +36,10 @@ class DeckController extends Controller
 
     public function show($id)
     {
-        $deck = Deck::findOrFail($id); // Find the deck by ID or fail if not found
-        return view('decks.show', compact('deck')); // Pass the deck to the view
+        $deck = Deck::findOrFail($id);
+        $cards = Card::all(); // Fetch all cards from the master table
+
+        return view('decks.show', compact('deck', 'cards'));
     }
 
     public function edit($id)
@@ -66,5 +69,23 @@ class DeckController extends Controller
 
         // Redirect to the index page after successfully deleting the deck
         return redirect()->route('decks.index');
+    }
+
+    public function addCard(Request $request, $deckId)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'card_id' => 'required|exists:cards,id',
+        ]);
+
+        // Find the deck by ID or fail if not found
+        $deck = Deck::findOrFail($deckId);
+
+        // Attach the card to the deck
+        $deck->cards()->attach($request->card_id);
+
+        // Redirect to the deck's detail page with a success message
+        return redirect()->route('decks.show', $deckId)
+            ->with('success', 'Card added to deck successfully.');
     }
 }

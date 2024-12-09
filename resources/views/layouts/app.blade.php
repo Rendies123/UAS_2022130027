@@ -40,7 +40,7 @@
                                 <li><a class="dropdown-item" href="{{ route('decks.index') }}">Decks</a></li>
                                 <li><a class="dropdown-item" href="{{ route('cards.index') }}">Cards</a></li>
                                 <li><a class="dropdown-item" href="{{ route('card_types.index') }}">Card Types</a></li>
-                                <li><a class="dropdown-item" href="{{ route('cards_collection.index') }}">Card Collection</a></li>
+                                <li><a class="dropdown-item" href="{{ route('card_collections.index') }}">Card Collection</a></li>
                                 <li><a class="dropdown-item" href="{{ route('users.index') }}">Users</a></li>
                             </ul>
                         </li>
