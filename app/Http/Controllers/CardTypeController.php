@@ -1,10 +1,11 @@
 <?php
 
-// app/Http/Controllers/CardTypeController.php
 namespace App\Http\Controllers;
 
 use App\Models\CardType;
+use App\Models\Card;
 use Illuminate\Http\Request;
+
 
 class CardTypeController extends Controller
 {
@@ -20,19 +21,23 @@ class CardTypeController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'type_name' => 'required',
-        '_token' => 'required|csrf_token', // Ensure CSRF token is present and valid
-    ]);
-    CardType::create($request->only(['type_name'])); // Only allow mass assignment for 'type_name'
-    return redirect()->route('cardTypes.index');
-}
+    {
+        $request->validate([
+            'type_name' => 'required',
+        ]);
+        CardType::create($request->only(['type_name']));
+        return redirect()->route('card_types.index'); // Updated route name
+    }
 
     public function show($id)
     {
+        // Find the card type
         $cardType = CardType::findOrFail($id);
-        return view('cardTypes.show', compact('cardType'));
+
+        // Get all cards of this type
+        $cards = Card::where('type_id', $id)->get();
+
+        return view('cardTypes.show', compact('cardType', 'cards'));
     }
 
     public function edit($id)
@@ -42,19 +47,25 @@ class CardTypeController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'type_name' => 'required',
-        '_token' => 'required|csrf_token', // Ensure CSRF token is present and valid
-    ]);
-    CardType::findOrFail($id)->update($request->only(['type_name'])); // Only allow mass assignment for 'type_name'
-    return redirect()->route('cardTypes.index');
-}
+    {
+        $request->validate([
+            'type_name' => 'required',
+        ]);
+        CardType::findOrFail($id)->update($request->only(['type_name']));
+        return redirect()->route('card_types.index'); // Updated route name
+    }
+
+    public function getCardsByType($typeId)
+    {
+        $cardType = CardType::findOrFail($typeId);
+        $cards = Card::where('type_id', $typeId)->get();
+
+        return view('cardTypes.cards', compact('cardType', 'cards'));
+    }
 
     public function destroy($id)
     {
         CardType::findOrFail($id)->delete();
-        return redirect()->route('cardTypes.index');
+        return redirect()->route('card_types.index'); // Updated route name
     }
 }
-

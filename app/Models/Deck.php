@@ -18,7 +18,7 @@ class Deck extends Model
     // Define the relationship with the Card model
     public function cards()
     {
-        return $this->belongsToMany(Card::class, 'deck_card');
+    return $this->belongsToMany(Card::class, 'deck_card')->withTimestamps();
     }
 
     // Define the relationship with the User model

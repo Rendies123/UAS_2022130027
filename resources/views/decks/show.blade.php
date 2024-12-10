@@ -1,40 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>{{ $deck->name }}</h1>
-    <p>Deck ID: {{ $deck->id }}</p>
+<div class="container">
+    <h1>{{ $deck->name }} Deck</h1>
 
-    <!-- Edit and Delete Buttons -->
-    <a href="{{ route('decks.edit', $deck->id) }}" class="btn btn-warning">Edit</a>
-    <form action="{{ route('decks.destroy', $deck->id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-    <a href="{{ route('decks.index') }}" class="btn btn-secondary">Back to Decks</a>
+    <h2>Deck Cards</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>View Only</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($deckCards as $card)
+            <tr>
+                <td>{{ $card->name }}</td>
+                <td>{{ $card->cardType->type_name }}</td>
+                <td>
+                    {{ $card->pivot->is_view_only ? 'Yes' : 'No' }}
+                </td>
+                <td>
+                    @if(!$card->pivot->is_view_only)
+                        <form action="{{ route('deck.removeCard', [$deck->id, $card->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    @else
+                        <a href="{{ route('cards.show', $card->id) }}" class="btn btn-info">View</a>
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-    <!-- Add Card to Deck Form -->
     <h2>Add Card to Deck</h2>
     <form action="{{ route('decks.addCard', $deck->id) }}" method="POST">
         @csrf
-        <label for="card_id">Select Card:</label>
-        <select name="card_id" id="card_id" required>
-            @foreach($cards as $card)
-                <option value="{{ $card->id }}">{{ $card->name }}</option>
-            @endforeach
-        </select>
+        <div class="form-group">
+            <label for="card_id">Select Card</label>
+            <select name="card_id" id="card_id" class="form-control">
+                @foreach($allCards as $card)
+                    <option value="{{ $card->id }}">{{ $card->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" name="is_view_only" id="is_view_only" class="form-check-input">
+            <label for="is_view_only" class="form-check-label">View Only</label>
+        </div>
         <button type="submit" class="btn btn-primary">Add Card</button>
     </form>
-
-    <!-- List of Cards in Deck -->
-    <h2>Cards in Deck</h2>
-    @if($deck->cards->count() > 0)
-        <ul>
-            @foreach($deck->cards as $card)
-                <li>{{ $card->name }}</li>
-            @endforeach
-        </ul>
-    @else
-        <p>No cards in this deck yet.</p>
-    @endif
+</div>
 @endsection

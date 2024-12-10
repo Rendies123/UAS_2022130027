@@ -9,15 +9,31 @@ class Card extends Model
 {
     use HasFactory;
 
-    // Define the many-to-many relationship with Deck
-    public function decks()
+    protected $fillable = [
+        'name',
+        'type_id',
+        'description',
+        // Add other relevant fields
+    ];
+
+    // Relationship with CardType
+    public function cardType()
     {
-        return $this->belongsToMany(Deck::class, 'deck_cards');
+        return $this->belongsTo(CardType::class, 'type_id');
     }
 
-    // Define the relationship to CardType (assuming you have a CardType model)
-    public function type()
+    // Many-to-many relationship with Decks
+    public function decks()
+{
+    return $this->belongsToMany(Deck::class, 'deck_card')->withTimestamps();
+}
+
+    // Scope for view-only cards in a specific deck
+    public function scopeViewOnly($query, $deckId)
     {
-        return $this->belongsTo(CardType::class, 'type_id'); // Assuming 'type_id' is the foreign key in the cards table
+        return $query->whereHas('decks', function($q) use ($deckId) {
+            $q->where('deck_id', $deckId)
+              ->where('is_view_only', true);
+        });
     }
 }

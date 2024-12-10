@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Call the CardSeeder
-        $this->call(CardSeeder::class);
+        $this->call([
+            CardTypeSeeder::class,
+            // other seeders if needed
+            CardSeeder::class,
+        ]);
+
     }
 }

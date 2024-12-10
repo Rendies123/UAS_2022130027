@@ -9,24 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // database/migrations/xxxx_xx_xx_xxxxxx_create_cards_table.php
     public function up()
     {
-        Schema::create('cards', function (Blueprint $table) {
+            Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');//->constrained('card_types'); // Assuming you have a card_types table
+            // Ensure you have the type_id column
+            $table->foreignId('type_id')
+            ->constrained('card_types')
+            ->onDelete('cascade'); // or 'restrict' depending on your requirements
             $table->string('attribute')->nullable();
             $table->string('image_url')->nullable();
             $table->timestamps();
         });
-        
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('cards');
     }

@@ -6,42 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('card_collections', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable(); // Optional name for the collection
-            $table->foreignId('user_id')
-                  ->constrained()
-                  ->onDelete('cascade');
-            $table->text('description')->nullable(); // Optional description
+            $table->string('name');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('description')->nullable();
+            $table->boolean('is_public')->default(false);
             $table->timestamps();
         });
 
-        // Optional: Pivot table for many-to-many relationship
+        // Pivot table for card collections and cards (many-to-many)
         Schema::create('card_collection_card', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('card_collection_id')
-                  ->constrained('card_collections')
-                  ->onDelete('cascade');
-            $table->foreignId('card_id')
-                  ->constrained('cards')
-                  ->onDelete('cascade');
-            $table->integer('quantity')->default(1); // Optional quantity tracking
+            $table->foreignId('card_collection_id')->constrained()->onDelete('cascade');
+            $table->foreignId('card_id')->constrained()->onDelete('cascade');
+            $table->integer('quantity')->default(1);
             $table->timestamps();
-
-            // Prevent duplicate entries
-            $table->unique(['card_collection_id', 'card_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('card_collection_card');
         Schema::dropIfExists('card_collections');

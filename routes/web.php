@@ -41,3 +41,13 @@ Auth::routes();
 
 // Home route after login
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Add this to your existing routes
+Route::get('/card-types/{typeId}/cards', [CardTypeController::class, 'getCardsByType'])
+    ->name('card_types.cards');
+
+Route::post('/decks/{deck}/add-card', [DeckController::class, 'addCard'])
+    ->name('decks.addCard');
+
+    Route::delete('/decks/{deck}/cards/{card}', [DeckController::class, 'removeCard'])
+    ->name('deck.removeCard'); // Note: deck.removeCard, not decks.removeCard

@@ -4,25 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateCardTypesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    // database/migrations/xxxx_xx_xx_xxxxxx_create_card_types_table.php
     public function up()
     {
         Schema::create('card_types', function (Blueprint $table) {
             $table->id();
-            $table->string('type_name');
+            $table->string('type_name'); // Changed from 'type_name' if needed
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+
+    public function down()
     {
         Schema::dropIfExists('card_types');
     }
-};
+}

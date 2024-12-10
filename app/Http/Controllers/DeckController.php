@@ -37,9 +37,16 @@ class DeckController extends Controller
     public function show($id)
     {
         $deck = Deck::findOrFail($id);
-        $cards = Card::all(); // Fetch all cards from the master table
 
-        return view('decks.show', compact('deck', 'cards'));
+        // Get all cards in the deck
+        $deckCards = $deck->cards()->with('cardType')->get();
+
+        $allCards = Card::all();
+
+        // Get view-only cards
+        $viewOnlyCards = $deck->cards()->where('is_view_only', true)->get();
+
+        return view('decks.show', compact('deck', 'deckCards', 'allCards', 'viewOnlyCards'));
     }
 
     public function edit($id)
@@ -72,20 +79,27 @@ class DeckController extends Controller
     }
 
     public function addCard(Request $request, $deckId)
-    {
-        // Validate the incoming request data
-        $request->validate([
-            'card_id' => 'required|exists:cards,id',
-        ]);
+        {
+            $request->validate([
+                'card_id' => 'required|exists:cards,id',
+                'is_view_only' => 'boolean'
+            ]);
 
-        // Find the deck by ID or fail if not found
-        $deck = Deck::findOrFail($deckId);
+            $card = Card::findOrFail($request->card_id);
+            $deck = Deck::findOrFail($deckId);
 
-        // Attach the card to the deck
-        $deck->cards()->attach($request->card_id);
+            // Attach the card with optional view-only status
+            $deck->cards()->attach($card->id);
 
-        // Redirect to the deck's detail page with a success message
-        return redirect()->route('decks.show', $deckId)
-            ->with('success', 'Card added to deck successfully.');
-    }
+            return redirect()->route('decks.show', $deckId)
+                ->with('success', 'Card added to deck successfully.');
+        }
+        public function removeCard(Deck $deck, Card $card)
+        {
+            // Use route model binding to automatically find the deck and card
+            $deck->cards()->detach($card->id);
+
+            return redirect()->route('decks.show', $deck->id)
+                ->with('success', 'Card removed from deck successfully.');
+        }
 }
